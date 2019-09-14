@@ -7,7 +7,6 @@ from docx import Document
 from find_job_titles import FinderAcora
 skillsData = np.load("finalDataTags.npy")
 
-data = ResumeParser("demo.docx").get_extracted_data()
 
 import docx
 
