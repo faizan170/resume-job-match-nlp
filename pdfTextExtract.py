@@ -79,10 +79,3 @@ def get_number_of_pages(file_name):
                 return None
     except PDFSyntaxError:
         return None
-'''
-text = ""
-
-for page in extract_text_from_pdf("C:/Users/Faizan/Downloads/Microsoft.SkypeApp_kzf8qxf38zg5c!App/All/naveed'scv.pdf"):
-    text += ' ' + page
-print(text)
-'''

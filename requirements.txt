@@ -1,0 +1,5 @@
+pyresparser
+python-docx
+pdfminer.six
+find_job_titles
+numpy
