@@ -321,9 +321,27 @@ def parseAndMatchResume(resumePath, jobPath, fileName):
     finalResults = finalArrangeData(rawResultsResume, fileName)
     return finalResults
     
+
+# Validate data
+def valid_xml_char_ordinal(c):
+    codepoint = ord(c)
+    # conditions ordered by presumed frequency
+    return (
+        0x20 <= codepoint <= 0xD7FF or
+        codepoint in (0x9, 0xA, 0xD) or
+        0xE000 <= codepoint <= 0xFFFD or
+        0x10000 <= codepoint <= 0x10FFFF
+        )
+
+
+def CleanString(text):
+    cleaned_string = ''.join(c for c in text if valid_xml_char_ordinal(c))
+    return cleaned_string
+
 # Creates a docx file
 
 def buildDocxFile(data, filePath):
+    data = CleanString(data)
     document = Document()
     p = document.add_paragraph(data)
     document.save(filePath)
@@ -355,3 +373,13 @@ def convertFileToText(fileName):
         return text
     else:
         None
+
+
+
+
+#text = ""
+#for page in extract_text_from_pdf("C:/Users/Faizan/Downloads/Microsoft.SkypeApp_kzf8qxf38zg5c!App/All/Profile (1).pdf"):
+#    text += ' ' + page
+#cleaned_string = ''.join(c for c in text if valid_xml_char_ordinal(c))
+#buildDocxFile(cleaned_string, "resume.docx")
+parseAndMatchResume("resume.docx","demo.docx", "profile.pdf")
