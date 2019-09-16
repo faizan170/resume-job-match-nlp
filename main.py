@@ -49,10 +49,8 @@ Find job title in job text. Match job title with resume
 Check length of resume
 '''
 def finalizeMetaResults(ResumePath, JobPath, ResumeData, JobData):
-    text = ""
     meta = {}
-    for page in extract_text_from_pdf(ResumePath):
-        text += ' ' + page
+    text = getTextFromDocx(ResumePath)
     meta["length"] = len(text)
     textJob = getTextFromDocx(JobPath)
     finder = FinderAcora()
@@ -64,10 +62,12 @@ def finalizeMetaResults(ResumePath, JobPath, ResumeData, JobData):
         if jobTitle in text:
             meta["jobTitleResume"] = "match"
     
+    
     meta["educationHeading"] = True if checkEducation(text) else False    
     meta["workExperienceHeading"] = True if checkExperience(text) else False
     meta["educationRequirements"] = True if checkEducation(textJob) else False
     ResumeData["skillsData"] = countWords(ResumeData["skillsData"], text.lower(), textJob.lower())
+    
     return meta
 
 '''
@@ -105,7 +105,12 @@ def parseSkills(skills):
 def calcAtsScore(resumeData, fileName, skills):
     points = {}
     points["skills"] = 1 if skills["not-exists"] == 0 else 0
-    points["experience"] = 1 if len(resumeData["experience"]) > 0 else 0
+    print(resumeData["experience"])
+    
+    if resumeData["experience"] != None:
+        points["experience"] = 1 if len(resumeData["experience"]) > 0 else 0
+    else:
+        points["experience"] = 0
     points["email"] = 1 if resumeData["email"] is not None else 0
         
     points["mobile_number"] = 1 if resumeData["mobile_number"] is not None else 0
@@ -296,16 +301,19 @@ def getResults(resumePath, jobPath):
     old = time.time()
     resumeData = ResumeParser(resumePath).get_extracted_data()
     resumeData["skills"] = parseSkills(resumeData["skills"])
-    print("Resume Skills:", resumeData["skills"])
+    #print("Resume Skills:", resumeData["skills"])
 
     jobData = ResumeParser(jobPath).get_extracted_data()
     jobData["skills"] = parseSkills(jobData["skills"])
-    print("Job Skills:", jobData["skills"])
+    #print("Job Skills:", jobData["skills"])
 
     skillsRes = finalizeSkillsDisplay(resumeData["skills"], jobData["skills"])
     resumeData["skillsData"] = skillsRes
+
     miscResults = finalizeMetaResults(resumePath, jobPath, resumeData, jobData)
+
     resumeData["meta"] = miscResults
+
     return resumeData, jobData
 
 
@@ -356,7 +364,7 @@ def processText(resumeText, jobText, ftype):
     buildDocxFile(jobText, jobPath)
     fileType = None if ftype == "text" else "file." + ftype
     res = parseAndMatchResume(resumePath, jobPath, fileType)
-    print(json.dumps(finalResults, indent=2))
+    print(json.dumps(res, indent=2))
 
 
 # Get text from file
@@ -382,4 +390,5 @@ def convertFileToText(fileName):
 #    text += ' ' + page
 #cleaned_string = ''.join(c for c in text if valid_xml_char_ordinal(c))
 #buildDocxFile(cleaned_string, "resume.docx")
-parseAndMatchResume("resume.docx","demo.docx", "profile.pdf")
+#data = parseAndMatchResume("resume.docx","demo.docx", "profile.pdf")
+#print(data)
