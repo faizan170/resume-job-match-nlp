@@ -105,7 +105,6 @@ def parseSkills(skills):
 def calcAtsScore(resumeData, fileName, skills):
     points = {}
     points["skills"] = 1 if skills["not-exists"] == 0 else 0
-    print(resumeData["experience"])
     
     if resumeData["experience"] != None:
         points["experience"] = 1 if len(resumeData["experience"]) > 0 else 0
